@@ -22,18 +22,18 @@ import java.security.NoSuchAlgorithmException;
 
 public class MainActivity extends Activity {
 
-    private CallbackManager callbackManager;
-    private LoginButton loginButton;
+    private CallbackManager callbackManager;//responsavel pela validacao do usuario e resposta da operaçao
+    private LoginButton loginButton;// botao do login facebook
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FacebookSdk.sdkInitialize(getApplicationContext());
+        FacebookSdk.sdkInitialize(getApplicationContext());//tudo que é associado ao facebook é carregado nesse momento, feito antes do setcontentview
         setContentView(R.layout.activity_main);
 
         loginButton = (LoginButton) findViewById(R.id.login_button);
 
-        callbackManager = CallbackManager.Factory.create();
+        callbackManager = CallbackManager.Factory.create(); //faz com que o callback crie a manipulacao tudo automatico
 
         try {
             PackageInfo info = getPackageManager().getPackageInfo(
@@ -52,7 +52,7 @@ public class MainActivity extends Activity {
 
         }
 
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {  //verifica qual é o status do usuario no momento da conexao
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Log.i("ID_FB",loginResult.getAccessToken().getUserId());
@@ -70,19 +70,19 @@ public class MainActivity extends Activity {
             }
         });
 
-        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();//verifica se tem um token valido e redireciona para a tela
         if(accessToken != null){
-            redirect(accessToken.getUserId());
+            redirect(accessToken.getUserId()); //devolve qual o id que está logado
         }
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) { //precisa exister esse metodo
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
 
-    private void redirect(String ID){
+    private void redirect(String ID){ //todos os ids no facebook sáo string
         Intent intent = new Intent(MainActivity.this,FriendsActivity.class);
         intent.putExtra("FB_ID",ID);
         startActivity(intent);
